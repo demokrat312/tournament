@@ -53,7 +53,9 @@ class TeamRepository extends EntityRepository
         $results = $qb->getQuery()->getResult();
         $teams   = array();
         foreach ($results as $result) {
-            $teams[] = $result->getTeamWin();
+            $team = $result->getTeamWin();
+            $team->result = $result;
+            $teams[] = $team;
         }
 
 

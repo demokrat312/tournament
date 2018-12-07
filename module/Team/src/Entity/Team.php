@@ -35,6 +35,11 @@ class Team
      */
     private $group;
 
+    /**
+     * @var MatchResult
+     */
+    public $result;
+
 
     /**
      * Get id.

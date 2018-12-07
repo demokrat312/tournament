@@ -125,7 +125,7 @@ class TeamManager
     }
 
     /**
-     * Перемешиваем массив в случайном порядке
+     * Создание матча где сильная команда играет со слабой
      *
      * @param array|Team[] $teams
      * @return array|Team[]
@@ -133,8 +133,13 @@ class TeamManager
     private function strongWithWeakSort(array $teams)
     {
         usort($teams, function(Team $a, Team $b){
-            if($a->get)
+            $score1 = explode(':', $a->result->getResult())[0];
+            $score2 = explode(':', $b->result->getResult())[0];
+            if($score1 === $score2){
                 return 0;
+            }
+
+            return $score1 < $score2 ? 1 : -1;
         });
 
         return $teams;
@@ -316,8 +321,8 @@ class TeamManager
         $len        = count($teams);
 
         // Для первой игры в playoff делим сильные с слабыми
-        if($typeId === TeamMatch::TYPE_PLAYOFF_1){
-            $this->strongWithWeakSort($teams);
+        if($typeId === TeamMatch::TYPE_PLAYOFF_4){
+            $teamsSplit = $this->strongWithWeakSort($teams);
         } else {
             $teamsSplit = $this->shuffleAssoc($teams);
         }
