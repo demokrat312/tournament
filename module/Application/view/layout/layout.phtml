@@ -1,0 +1,97 @@
+<?= $this->doctype() ?>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <?= $this->headTitle('ZF Skeleton Application')->setSeparator(' - ')->setAutoEscape(false) ?>
+
+    <?= $this->headMeta()
+             ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+             ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+    ?>
+
+    <!-- Le styles -->
+    <?= $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
+//             ->prependStylesheet($this->basePath('css/style.css'))
+//             ->prependStylesheet($this->basePath('css/bootstrap-theme.min.css'))
+//             ->prependStylesheet($this->basePath('css/bootstrap.min.css'))
+             ->appendStylesheet($this->basePath('theme/css/bootstrap.min.css'))
+             ->appendStylesheet($this->basePath('theme/css/metisMenu.min.css'))
+             ->appendStylesheet($this->basePath('theme/css/sb-admin-2.min.css'))
+             ->appendStylesheet($this->basePath('theme/css/font-awesome.min.css'))
+    ?>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Tournament</a>
+        </div>
+        <!-- /.navbar-header -->
+
+        <ul class="nav navbar-top-links navbar-right">
+            <li><a href="<?= $this->url('team', ['action' => 'clear'])?>"><i class="fa fa-trash fa-fw"></i> Очистить базу (Кроме команд)</a>
+            <li><a href="<?= $this->url('team', ['action' => 'clearTeam'])?>"><i class="fa fa-trash fa-fw"></i> Удалить команды</a>
+            </li>
+        </ul>
+
+        <div class="navbar-default sidebar" role="navigation">
+            <div class="sidebar-nav navbar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li>
+                        <a href="<?= $this->url('team')?>"><i class="fa fa-dashboard fa-fw"></i> Team</a>
+                    </li>
+                    <li>
+                        <a href="<?= $this->url('team', ['action' => 'qualifying'])?>"><i class="fa fa-dashboard fa-fw"></i> Qualifying</a>
+                    </li>
+                    <li>
+                        <a href="<?= $this->url('team', ['action' => 'playoff'])?>"><i class="fa fa-dashboard fa-fw"></i> Playoff</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.sidebar-collapse -->
+        </div>
+        <!-- /.navbar-static-side -->
+    </nav>
+
+    <div id="page-wrapper">
+        <?= $this->content ?>
+        <!-- /.row -->
+    </div>
+    <!-- /#page-wrapper -->
+
+</div>
+
+<!-- Scripts -->
+<?= $this->headScript()
+//         ->prependFile($this->basePath('js/jquery-3.1.0.min.js'))
+//         ->prependFile($this->basePath('js/bootstrap.min.js'))
+         ->appendFile($this->basePath('theme/js/jquery.min.js'))
+         ->appendFile($this->basePath('theme/js/bootstrap.min.js'))
+         ->appendFile($this->basePath('theme/js/metisMenu.min.js'))
+         ->appendFile($this->basePath('theme/js/raphael.min.js'))
+         ->appendFile($this->basePath('theme/js/sb-admin-2.js'))
+?>
+<?//= $this->inlineScript() ?>
+
+</body>
+
+</html>

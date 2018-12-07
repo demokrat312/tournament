@@ -1,0 +1,30 @@
+<?php
+/** @var \Team\Entity\Team[] $teams */
+/** @var \Team\Entity\TournamentStatus $tournamentStatus */
+/** @var string $title */
+?>
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header"><?= $title ?></h1>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<div class="panel-body">
+    <?php if (count($matches) > 0): ?>
+        <a href="<?= $this->url('team', ['action' => 'teamTossPlayoff']) ?>"
+           type="button" class="btn btn-primary">Жеребьевка для playoff</a>
+        <a href="<?= $this->url('team', ['action' => 'teamMatchResult']) ?>"
+           type="button" class="btn btn-primary">Сгенерировать результаты для playoff</a>
+
+        <?= $this->flashMessenger()->render('error') ?>
+        <?php if ($tournamentStatus->getStatusId() === \Team\Entity\TournamentStatus::STATUS_SPLIT_MATCH_PLAYOFF): ?>
+            <?= $this->partial('partial/stage5.phtml', ['matches' => $matches]) ?>
+        <?php elseif ($tournamentStatus->getStatusId() === \Team\Entity\TournamentStatus::STATUS_PLAY_OFF): ?>
+            <?= $this->partial('partial/stage6.phtml', ['matches' => $matches]) ?>
+        <?php else: ?>
+            Распределения еще не было
+        <?php endif; ?>
+    <?php else: ?>
+        Распределения еще не было
+    <?php endif; ?>
+</div>

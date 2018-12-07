@@ -1,0 +1,7 @@
+<?php
+/** @var \Team\Entity\Team[] $teams */
+?>
+<div class="row">
+    <?= $this->partial('partial/group.phtml', ['teams' => $teams, 'groupName' => \Team\Entity\TeamSplit::GROUP1]) ?>
+    <?= $this->partial('partial/group.phtml', ['teams' => $teams, 'groupName' => \Team\Entity\TeamSplit::GROUP2]) ?>
+</div>

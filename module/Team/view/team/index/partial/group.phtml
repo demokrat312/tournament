@@ -1,0 +1,40 @@
+<?php
+/** @var \Team\Entity\Team[] $teams */
+/** @var string $groupName */
+?>
+<!-- /.col-lg-6 -->
+<div class="col-lg-6">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Group <?=$groupName?>
+        </div>
+        <!-- /.panel-heading -->
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name of team</th>
+                        <th>Group name</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php $counter = 1; ?>
+                    <?php for ($i = 0; $i < count($teams); $i++): ?>
+                        <?php if ($teams[$i]->getGroup()->getGroupName() === $groupName): ?>
+                            <tr>
+                                <td><?= $counter++ ?></td>
+                                <td><?= $teams[$i]->getTitle() ?></td>
+                                <td><?= $teams[$i]->getGroup()->getGroupName() ?></td>
+                            </tr>
+                        <?php endif; ?>
+                    <?php endfor; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- /.panel -->
+</div>
+<!-- /.col-lg-6 -->

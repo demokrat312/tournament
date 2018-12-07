@@ -1,0 +1,21 @@
+<?php
+/** @var \Team\Entity\Team[] $teams */
+?>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Name of team</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php for ($i = 0; $i < count($teams); $i++): ?>
+            <tr>
+                <td><?= $i + 1 ?></td>
+                <td><?= $teams[$i]->getTitle() ?></td>
+            </tr>
+        <?php endfor; ?>
+        </tbody>
+    </table>
+    <div class="table-responsive">

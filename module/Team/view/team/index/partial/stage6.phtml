@@ -1,0 +1,8 @@
+<?php
+/** @var \Team\Entity\TeamMatch[] $matches */
+?>
+<div class="row">
+    <div class="col-lg-12">
+        <?= $this->partial('partial/matchResult.phtml', ['matches' => $matches, 'groupName' => \Team\Entity\TeamSplit::GROUP3]) ?>
+    </div>
+</div>

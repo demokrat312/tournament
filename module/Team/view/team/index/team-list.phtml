@@ -1,0 +1,26 @@
+<?php
+/** @var \Team\Entity\Team[] $teams */
+/** @var \Team\Entity\TournamentStatus $tournamentStatus */
+?>
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">Teams</h1>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<div class="panel-body">
+    <a href="<?= $this->url('team', ['action' => 'teamCreate']) ?>"
+       type="button" class="btn btn-primary">Добавить команду</a>
+    <a href="<?= $this->url('team', ['action' => 'splitTeams']) ?>"
+       type="button" class="btn btn-primary">Разделить команды на группы(генератор)</a>
+    <a href="<?= $this->url('team', ['action' => 'teamTossQualification']) ?>"
+       type="button" class="btn btn-primary">Жеребьевка (кто с кем будет играть)</a>
+
+    <?= $this->flashMessenger()->render('error') ?>
+
+    <?php if ($tournamentStatus->getStatusId() === \Team\Entity\TournamentStatus::STATUS_CREATE_TEAM): ?>
+        <?= $this->partial('partial/stage1.phtml', ['teams' => $teams]) ?>
+    <?php else: ?>
+        <?= $this->partial('partial/stage2.phtml', ['teams' => $teams]) ?>
+    <?php endif; ?>
+</div>
