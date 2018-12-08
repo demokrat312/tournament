@@ -1,8 +1,17 @@
 <?php
 /** @var \Team\Entity\TeamMatch[] $matches */
+/** @var \Team\Classes\PlayoffFinishedMatch[] $prevMatch */
+/** @var string $currentTitle */
 ?>
 <div class="row">
     <div class="col-lg-12">
-        <?= $this->partial('partial/matchResult.phtml', ['matches' => $matches, 'groupName' => \Team\Entity\TeamSplit::GROUP3]) ?>
+        <?= $this->partial('partial/matchResult.phtml',
+            ['matches' => $matches, 'titlePrefix' => '', 'groupName' => $currentTitle]) ?>
     </div>
+    <?php foreach ($prevMatch as $prev): ?>
+        <div class="col-lg-12">
+            <?= $this->partial('partial/matchResult.phtml',
+                ['matches' => $prev->matches, 'titlePrefix' => '', 'groupName' => $prev->title]) ?>
+        </div>
+    <?php endforeach; ?>
 </div>

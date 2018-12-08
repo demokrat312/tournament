@@ -1,10 +1,11 @@
 <?php
 /** @var \Team\Entity\TeamMatch[] $matches */
 /** @var string $groupName */
+/** @var string $titlePrefix */
 ?>
 <div class="panel panel-default">
     <div class="panel-heading">
-        Group <?= $groupName ?>
+        <?= $titlePrefix . $groupName ?>
     </div>
     <!-- /.panel-heading -->
     <div class="panel-body">
@@ -22,7 +23,7 @@
                 <tbody>
                 <?php $counter = 1; ?>
                 <?php for ($i = 0; $i < count($matches); $i++): ?>
-                    <?php if ($matches[$i]->getGroupName() === $groupName): ?>
+                    <?php if ($matches[$i]->getGroupName() === $groupName || $matches[$i]->getGroupName() === null): ?>
                         <tr>
                             <td><?= $counter++ ?></td>
                             <td><?= $matches[$i]->getTeam1()->getTitle() ?></td>

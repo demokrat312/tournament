@@ -4,10 +4,12 @@
 <div class="row">
     <!-- /.col-lg-6 -->
     <div class="col-lg-6">
-        <?= $this->partial('partial/matchResult.phtml', ['matches' => $matches, 'groupName' => \Team\Entity\TeamSplit::GROUP1]) ?>
+        <?= $this->partial('partial/matchResult.phtml',
+            ['matches' => $matches, 'titlePrefix' => 'Group ', 'groupName' => \Team\Entity\TeamSplit::GROUP1]) ?>
     </div>
     <!-- /.col-lg-6 -->
     <div class="col-lg-6">
-        <?= $this->partial('partial/matchResult.phtml', ['matches' => $matches, 'groupName' => \Team\Entity\TeamSplit::GROUP2]) ?>
+        <?= $this->partial('partial/matchResult.phtml',
+            ['matches' => $matches, 'titlePrefix' => 'Group ', 'groupName' => \Team\Entity\TeamSplit::GROUP2]) ?>
     </div>
 </div>

@@ -1,0 +1,17 @@
+<?php
+/** @var \Team\Entity\TournamentStatus $tournamentStatus */
+?>
+<?php if ($tournamentStatus->getStatusId() === \Team\Entity\TournamentStatus::STATUS_CREATE_TEAM): ?>
+    <a href="<?= $this->url('team', ['action' => 'teamCreate']) ?>"
+       type="button" class="btn btn-primary">Добавить команду</a>
+<?php endif; ?>
+<?php if (in_array($tournamentStatus->getStatusId(),
+    [\Team\Entity\TournamentStatus::STATUS_SPLIT_TEAM, \Team\Entity\TournamentStatus::STATUS_CREATE_TEAM])): ?>
+    <a href="<?= $this->url('team', ['action' => 'splitTeams']) ?>"
+       type="button" class="btn btn-primary">Разделить команды на группы(генератор)</a>
+<?php endif; ?>
+<?php if (in_array($tournamentStatus->getStatusId(),
+    [\Team\Entity\TournamentStatus::STATUS_SPLIT_TEAM, \Team\Entity\TournamentStatus::STATUS_SPLIT_MATCH])): ?>
+    <a href="<?= $this->url('team', ['action' => 'teamTossQualification']) ?>"
+       type="button" class="btn btn-primary">Жеребьевка (кто с кем будет играть)</a>
+<?php endif; ?>

@@ -1,8 +1,9 @@
 <?php
 /** @var \Team\Entity\TeamMatch[] $matches */
+/** @var string $currentTitle */
 ?>
 <div class="row">
     <div class="col-lg-12">
-        <?= $this->partial('partial/match.phtml', ['matches' => $matches, 'groupName' => \Team\Entity\TeamSplit::GROUP3]) ?>
+        <?= $this->partial('partial/match.phtml', ['matches' => $matches, 'groupName' => $currentTitle]) ?>
     </div>
 </div>

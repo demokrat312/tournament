@@ -11,11 +11,13 @@ namespace Team\Service;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMException;
+use Team\Classes\PlayoffFinishedMatch;
 use Team\Entity\MatchResult;
 use Team\Entity\TeamMatch;
 use Team\Entity\Team;
 use Team\Entity\TeamSplit;
 use Team\Entity\TournamentStatus;
+use ZendDeveloperTools\Exception\ParameterMissingException;
 
 class TeamManager
 {
@@ -38,6 +40,12 @@ class TeamManager
         return $this->getTeamRep()->findAll();
     }
 
+    /**
+     * Возвращаем матчи по типу
+     *
+     * @param int $typeId
+     * @return TeamMatch[]
+     */
     public function getMatchesByType(int $typeId)
     {
         return $this->getTeamMatchRep()->findAllByType($typeId);
@@ -132,10 +140,10 @@ class TeamManager
      */
     private function strongWithWeakSort(array $teams)
     {
-        usort($teams, function(Team $a, Team $b){
+        usort($teams, function (Team $a, Team $b) {
             $score1 = explode(':', $a->result->getResult())[0];
             $score2 = explode(':', $b->result->getResult())[0];
-            if($score1 === $score2){
+            if ($score1 === $score2) {
                 return 0;
             }
 
@@ -213,7 +221,7 @@ class TeamManager
 
 
     /**
-     * Удаляем все записи из MatchResult
+     * Удаляем все результаты матча или по типу(нужно для перегенерации)
      *
      * @param int $typeId
      * @throws \Doctrine\DBAL\DBALException
@@ -278,7 +286,7 @@ class TeamManager
      */
     public function splitByMatchPlayoff()
     {
-        $typeId     = $this->getLastPlayOffTypeId();
+        $typeId     = $this->getLastMatchTypeId();
         $group      = $this->getTeamRep()->findWin($typeId);
         $nextTypeId = $this->getNextMatchTypeId($typeId);
 
@@ -288,7 +296,7 @@ class TeamManager
 
         $this->deleteMatchSplit($nextTypeId);
 
-        $this->createMatch($group, TeamSplit::GROUP3, $nextTypeId);
+        $this->createMatch($group, null, $nextTypeId);
 
         $this->em->flush();
 
@@ -297,9 +305,9 @@ class TeamManager
         return true;
     }
 
-    public function getLastPlayOffTypeId()
+    public function getLastMatchTypeId()
     {
-        return $this->getTeamRep()->getLastPlayOffTypeId();
+        return $this->getTeamRep()->getLastMatchTypeId();
     }
 
     /**
@@ -316,18 +324,18 @@ class TeamManager
      * @param int    $typeId
      * @throws ORMException
      */
-    private function createMatch(array $teams, string $groupName, int $typeId)
+    private function createMatch(array $teams, string $groupName = null, int $typeId)
     {
-        $len        = count($teams);
+        $len = count($teams);
 
         // Для первой игры в playoff делим сильные с слабыми
-        if($typeId === TeamMatch::TYPE_PLAYOFF_4){
+        if ($typeId === TeamMatch::TYPE_PLAYOFF_4) {
             $teamsSplit = $this->strongWithWeakSort($teams);
         } else {
             $teamsSplit = $this->shuffleAssoc($teams);
         }
-        $half1      = array_slice($teamsSplit, 0, $len / 2);
-        $half2      = array_slice($teamsSplit, $len / 2);
+        $half1 = array_slice($teamsSplit, 0, $len / 2);
+        $half2 = array_slice($teamsSplit, $len / 2);
 
         for ($i = 0; $i < $len / 2; $i++) {
             $match = new TeamMatch();
@@ -347,37 +355,65 @@ class TeamManager
      * @throws ORMException
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ParameterMissingException
      */
     public function generateMatchResult(int $typeId)
     {
         if ($typeId === 0) {
-            $typeId = $this->getLastPlayOffTypeId();
+            $typeId = $this->getLastMatchTypeId();
         }
+
+        // Получаем последнии распределленные команды
         /** @var TeamMatch[] $matches */
         $matches = $this->getTeamMatchRep()->findAllByType($typeId);
 
-        // Очищаем результаты
+        // Если нету записей значит команды не распределяли
+        if(count($matches) === 0){
+            // Распределяем
+            $this->splitByMatchPlayoff();
+            $matches = $this->getTeamMatchRep()->findAllByType($typeId);
+        }
+
         $this->deleteMatchResult($typeId);
 
         foreach ($matches as $match) {
+            // Генерируем случайный результат
             $r  = str_shuffle("0123456789");
             $r1 = (int)$r[0];
             $r2 = (int)$r[1];
 
+            // Сохраняем результат
             $result = new MatchResult();
             $result
                 ->setTeamWin($match->getTeam1())
                 ->setMatch($match)
+                // Самый большой результат записываем первым
                 ->setResult($r1 > $r2 ? $r1 . ':' . $r2 : $r2 . ':' . $r1);
             $this->em->persist($result);
         }
 
         $this->em->flush();
+
+        // Меняем статус турнира
+        switch ($typeId) {
+            case TeamMatch::TYPE_QUALIFYING:
+                $status = TournamentStatus::STATUS_QUALIFYING;
+                break;
+            case TeamMatch::TYPE_PLAYOFF_4:
+                $status = TournamentStatus::STATUS_PLAYOFF_4;
+                break;
+            case TeamMatch::TYPE_PLAYOFF_2:
+                $status = TournamentStatus::STATUS_PLAYOFF_2;
+                break;
+            case TeamMatch::TYPE_PLAYOFF_1:
+                $status = TournamentStatus::STATUS_PLAYOFF_1;
+                break;
+            default:
+                throw new ParameterMissingException('Не известный тип');
+        }
         if ($typeId === TeamMatch::TYPE_QUALIFYING) {
-            $status = TournamentStatus::STATUS_QUALIFYING;
             $action = 'qualifying';
         } else {
-            $status = TournamentStatus::STATUS_PLAY_OFF;
             $action = 'playoff';
         }
         $this->updateTournamentStatus($status);
@@ -426,5 +462,41 @@ class TeamManager
         $qb = $this->em->createQueryBuilder();
 
         $qb->delete(Team::class)->getQuery()->execute();
+    }
+
+    /**
+     * Проверяем наступил playoff уже
+     *
+     * @return bool
+     */
+    public function isPlayoff(): bool
+    {
+        return in_array($this->getTournamentStatus()->getStatusId(), TournamentStatus::PLAYOFF_STATUS_ORDER);
+    }
+
+    /**
+     * Находим прошедшие матчи playoff
+     *
+     * @param int $typeId
+     * @return array|PlayoffFinishedMatch[]
+     */
+    public function getPrevPlayoffMatch(int $typeId)
+    {
+        $result = array();
+
+        if (in_array($typeId, TeamMatch::TYPE_PLAYOFF_ORDER))
+            foreach (TeamMatch::TYPE_PLAYOFF_ORDER as $order => $id) {
+                if ($typeId === $id) {
+                    break;
+                }
+                $matches                  = $this->getMatchesByType($id);
+                $finishedMatches          = new PlayoffFinishedMatch();
+                $finishedMatches->title   = TeamMatch::TYPE_TITLE[$id];
+                $finishedMatches->matches = $matches;
+
+                $result[] = $finishedMatches;
+            }
+
+        return array_reverse($result);
     }
 }

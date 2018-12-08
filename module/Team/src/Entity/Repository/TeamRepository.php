@@ -62,7 +62,13 @@ class TeamRepository extends EntityRepository
         return $teams;
     }
 
-    public function getLastPlayOffTypeId() {
+    /**
+     * Получаем последний тип матча
+     *
+     * @return mixed
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function getLastMatchTypeId() {
         $qb = $this->getEntityManager()->getRepository(TeamMatch::class)->createQueryBuilder('mat');
 
         $qb

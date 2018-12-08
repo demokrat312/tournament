@@ -1,28 +1,36 @@
 <?php
-/** @var \Team\Entity\Team[] $teams */
+/** @var \Team\Entity\TeamMatch[] $matches */
+/** @var \Team\Classes\PlayoffFinishedMatch[] $prevMatch */
 /** @var \Team\Entity\TournamentStatus $tournamentStatus */
-/** @var string $title */
+/** @var string $currentTitle */
+/** @var \Team\Entity\Team $winTeam */
 ?>
 <div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header"><?= $title ?></h1>
+        <h1 class="page-header">Playoff</h1>
     </div>
     <!-- /.col-lg-12 -->
 </div>
+<?php if($winTeam): ?>
+<div class="row">
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            Winner
+        </div>
+        <div class="panel-body">
+            <p><?=$winTeam->getTitle()?></p>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
 <div class="panel-body">
     <?php if (count($matches) > 0): ?>
-        <a href="<?= $this->url('team', ['action' => 'teamTossPlayoff']) ?>"
-           type="button" class="btn btn-primary">Жеребьевка для playoff</a>
-        <a href="<?= $this->url('team', ['action' => 'teamMatchResult']) ?>"
-           type="button" class="btn btn-primary">Сгенерировать результаты для playoff</a>
-
+        <?= $this->partial('partial/button/playoff.phtml', ['tournamentStatus' => $tournamentStatus]) ?>
         <?= $this->flashMessenger()->render('error') ?>
         <?php if ($tournamentStatus->getStatusId() === \Team\Entity\TournamentStatus::STATUS_SPLIT_MATCH_PLAYOFF): ?>
-            <?= $this->partial('partial/stage5.phtml', ['matches' => $matches]) ?>
-        <?php elseif ($tournamentStatus->getStatusId() === \Team\Entity\TournamentStatus::STATUS_PLAY_OFF): ?>
-            <?= $this->partial('partial/stage6.phtml', ['matches' => $matches]) ?>
+            <?= $this->partial('partial/stage5.phtml', ['matches' => $matches, 'currentTitle' => $currentTitle]) ?>
         <?php else: ?>
-            Распределения еще не было
+            <?= $this->partial('partial/stage6.phtml', ['matches' => $matches, 'prevMatch' => $prevMatch, 'currentTitle' => $currentTitle]) ?>
         <?php endif; ?>
     <?php else: ?>
         Распределения еще не было

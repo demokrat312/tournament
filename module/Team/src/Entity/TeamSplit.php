@@ -14,7 +14,6 @@ class TeamSplit
 {
     const GROUP1 = 'A';
     const GROUP2 = 'B';
-    const GROUP3 = 'C'; // playoff
     /**
      * @var int
      *

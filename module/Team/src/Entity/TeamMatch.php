@@ -24,6 +24,19 @@ class TeamMatch
         2 => self::TYPE_PLAYOFF_2,
         3 => self::TYPE_PLAYOFF_1,
     ];
+
+    const TYPE_PLAYOFF_ORDER = [
+        0 => self::TYPE_PLAYOFF_4,
+        1 => self::TYPE_PLAYOFF_2,
+        2 => self::TYPE_PLAYOFF_1,
+    ];
+
+    const TYPE_TITLE = [
+        self::TYPE_QUALIFYING => 'Qualifying',
+        self::TYPE_PLAYOFF_4  => 'Quarter final (1/4)',
+        self::TYPE_PLAYOFF_2  => 'Semi final (1/2)',
+        self::TYPE_PLAYOFF_1  => 'Final',
+    ];
     /**
      * @var int
      *

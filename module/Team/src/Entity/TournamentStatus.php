@@ -17,7 +17,16 @@ class TournamentStatus
     const STATUS_SPLIT_MATCH         = 3; // Жеребьевка
     const STATUS_QUALIFYING          = 4; // Отборочные
     const STATUS_SPLIT_MATCH_PLAYOFF = 5; // Жеребьевка для playoff
-    const STATUS_PLAY_OFF            = 6; // Финальные матчи
+    const STATUS_PLAYOFF_4           = 6; // Финальные матчи. 1/4
+    const STATUS_PLAYOFF_2           = 7; // Финальные матчи. 1/2 полуфина
+    const STATUS_PLAYOFF_1           = 8; // Финальные матчи. финал
+
+    CONST PLAYOFF_STATUS_ORDER = [
+        0 => self::STATUS_SPLIT_MATCH_PLAYOFF,
+        1 => self::STATUS_PLAYOFF_4,
+        2 => self::STATUS_PLAYOFF_2,
+        3 => self::STATUS_PLAYOFF_1,
+    ];
     /**
      * @var int
      *

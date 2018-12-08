@@ -100,7 +100,7 @@ class IndexController extends AbstractActionController
     }
 
     /**
-     * Сортируем команду на дивизионы
+     * Сортируем команды на дивизионы(Группы)
      */
     public function splitTeamsAction()
     {
@@ -152,45 +152,58 @@ class IndexController extends AbstractActionController
         return $this->redirect()->toRoute('team', ['action' => 'playoff']);
     }
 
+    /**
+     * Страница с результатами отборочных
+     *
+     * @return ViewModel
+     */
     public function qualifyingAction()
     {
         $typeId = TeamMatch::TYPE_QUALIFYING;
-        $title  = 'Qualifying';
 
         $matches          = $this->teamManager->getMatchesByType($typeId);
         $tournamentStatus = $this->teamManager->getTournamentStatus();
 
         $viewModel = new ViewModel([
             'matches'          => $matches,
-            'tournamentStatus' => $tournamentStatus,
-            'title'            => $title,
+            'tournamentStatus' => $tournamentStatus
         ]);
 
         return $viewModel;
     }
 
+    /**
+     * Страница с результатами playoff
+     *
+     * @return ViewModel
+     */
     public function playoffAction()
     {
-        $typeId = (int)$this->teamManager->getLastPlayOffTypeId();
+        $typeId = (int)$this->teamManager->getLastMatchTypeId();
 
-        if ($this->teamManager->getNextMatchTypeId($typeId) === null) {
-            $this->flashMessenger()->setNamespace('error')
-                 ->addMessage('Игра окончена');
-        }
-        $title = 'Playoff';
-        if ($typeId === TeamMatch::TYPE_QUALIFYING) {
-            $matches = [];
-        } else {
+        $matches      = [];
+        $prevMatch    = [];
+        $winTeam      = null;
+        $currentTitle = '';
+        if ($this->teamManager->isPlayoff()) {
+            $matches   = $this->teamManager->getMatchesByType($typeId);
+            $prevMatch = $this->teamManager->getPrevPlayoffMatch($typeId);
 
-            $matches = $this->teamManager->getMatchesByType($typeId);
+            if ($this->teamManager->getNextMatchTypeId($typeId) === null) {
+                $winTeam = $matches[0]->getResult()->getTeamWin();
+            }
+
+            $currentTitle = TeamMatch::TYPE_TITLE[$typeId];
         }
 
         $tournamentStatus = $this->teamManager->getTournamentStatus();
 
         $viewModel = new ViewModel([
             'matches'          => $matches,
+            'prevMatch'        => $prevMatch,
             'tournamentStatus' => $tournamentStatus,
-            'title'            => $title,
+            'winTeam'          => $winTeam,
+            'currentTitle'     => $currentTitle,
         ]);
 
         return $viewModel;
@@ -201,28 +214,30 @@ class IndexController extends AbstractActionController
      * Задаем результат для матчей
      *
      * @return \Zend\Http\Response
+     * @throws ParameterMissingException
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      */
     public function teamMatchResultAction()
     {
-        $typeId = (int)$this->params()->fromQuery('type', null);
+        $typeId = (int)$this->params()->fromQuery('type', 0);
 
         $action = $this->teamManager->generateMatchResult($typeId);
-
 
         return $this->redirect()->toRoute('team', ['action' => $action]);
     }
 
-    public function clearAction() {
+    public function clearAction()
+    {
         $this->teamManager->clearDB();
 
         return $this->redirect()->toRoute('team', ['action' => 'teamList']);
     }
 
-    public function clearTeamAction() {
-        $this->teamManager->clearDB();
+    public function clearTeamAction()
+    {
+        $this->teamManager->clearTeam();
 
         return $this->redirect()->toRoute('team', ['action' => 'teamList']);
     }

@@ -1,0 +1,17 @@
+<?php
+/** @var \Team\Entity\TournamentStatus $tournamentStatus */
+?>
+<?php if (in_array($tournamentStatus->getStatusId(),
+    [\Team\Entity\TournamentStatus::STATUS_SPLIT_MATCH_PLAYOFF])): ?>
+    <a href="<?= $this->url('team', ['action' => 'teamMatchResult'], ['query' => ['type' => \Team\Entity\TeamMatch::TYPE_PLAYOFF_4]]) ?>"
+       type="button" class="btn btn-primary">Результаты для playoff четверть финал</a>
+<?php endif; ?>
+<?php if (in_array($tournamentStatus->getStatusId(),
+    [\Team\Entity\TournamentStatus::STATUS_PLAYOFF_4])): ?>
+    <a href="<?= $this->url('team', ['action' => 'teamMatchResult'], ['query' => ['type' => \Team\Entity\TeamMatch::TYPE_PLAYOFF_2]]) ?>"
+       type="button" class="btn btn-primary">Результаты для playoff полуфинал</a>
+<?php endif; ?>
+<?php if ($tournamentStatus->getStatusId() === \Team\Entity\TournamentStatus::STATUS_PLAYOFF_2): ?>
+    <a href="<?= $this->url('team', ['action' => 'teamMatchResult'], ['query' => ['type' => \Team\Entity\TeamMatch::TYPE_PLAYOFF_1]]) ?>"
+       type="button" class="btn btn-primary">Финал</a>
+<?php endif; ?>
