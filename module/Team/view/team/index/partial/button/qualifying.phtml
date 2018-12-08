@@ -3,15 +3,15 @@
 ?>
 <?php if ($tournamentStatus->getStatusId() === \Team\Entity\TournamentStatus::STATUS_SPLIT_MATCH): ?>
     <a href="<?= $this->url('team', ['action' => 'teamTossQualification']) ?>"
-       type="button" class="btn btn-primary">Жеребьевка (кто с кем будет играть)</a>
+       type="button" class="btn btn-primary">The draw (who will play with anyone)</a>
 <?php endif; ?>
 <?php if (in_array($tournamentStatus->getStatusId(),
     [\Team\Entity\TournamentStatus::STATUS_SPLIT_MATCH, \Team\Entity\TournamentStatus::STATUS_QUALIFYING])): ?>
     <a href="<?= $this->url('team', ['action' => 'teamMatchResult'], ['query' => ['type' => \Team\Entity\TeamMatch::TYPE_QUALIFYING]]) ?>"
-       type="button" class="btn btn-primary">Сгенерировать результаты</a>
+       type="button" class="btn btn-primary">Generate match results</a>
 <?php endif; ?>
 <?php if (in_array($tournamentStatus->getStatusId(),
     [\Team\Entity\TournamentStatus::STATUS_QUALIFYING, \Team\Entity\TournamentStatus::STATUS_SPLIT_MATCH_PLAYOFF])): ?>
     <a href="<?= $this->url('team', ['action' => 'teamTossPlayoff']) ?>"
-       type="button" class="btn btn-primary">Жеребьевка для playoff</a>
+       type="button" class="btn btn-primary">The draw for playoff</a>
 <?php endif; ?>
