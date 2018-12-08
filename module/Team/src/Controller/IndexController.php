@@ -39,11 +39,6 @@ class IndexController extends AbstractActionController
         $this->teamManager = $teamManager;
     }
 
-    public function indexAction()
-    {
-        return new ViewModel();
-    }
-
     /**
      * Отображает список всех команд
      *
@@ -135,7 +130,7 @@ class IndexController extends AbstractActionController
     }
 
     /**
-     * Кто с кем играет
+     * Кто с кем играет для playoff
      *
      * @return \Zend\Http\Response
      * @throws \Doctrine\ORM\ORMException
@@ -185,10 +180,13 @@ class IndexController extends AbstractActionController
         $prevMatch    = [];
         $winTeam      = null;
         $currentTitle = '';
+
+        // Если playoff начелься
         if ($this->teamManager->isPlayoff()) {
             $matches   = $this->teamManager->getMatchesByType($typeId);
             $prevMatch = $this->teamManager->getPrevPlayoffMatch($typeId);
 
+            // Если последний этап берем команду которая победила
             if ($this->teamManager->getNextMatchTypeId($typeId) === null) {
                 $winTeam = $matches[0]->getResult()->getTeamWin();
             }
@@ -228,6 +226,11 @@ class IndexController extends AbstractActionController
         return $this->redirect()->toRoute('team', ['action' => $action]);
     }
 
+    /**
+     * Очищаем базу. Кромер таблицы team
+     *
+     * @return \Zend\Http\Response
+     */
     public function clearAction()
     {
         $this->teamManager->clearDB();
@@ -235,6 +238,11 @@ class IndexController extends AbstractActionController
         return $this->redirect()->toRoute('team', ['action' => 'teamList']);
     }
 
+    /**
+     * Очищаем таблицу team
+     *
+     * @return \Zend\Http\Response
+     */
     public function clearTeamAction()
     {
         $this->teamManager->clearTeam();

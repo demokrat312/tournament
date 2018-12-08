@@ -35,6 +35,11 @@ class TeamManager
         $this->em = $em;
     }
 
+    /**
+     * Получаем список всех команд
+     *
+     * @return array|object[]
+     */
     public function getAllTeams()
     {
         return $this->getTeamRep()->findAll();
@@ -56,6 +61,12 @@ class TeamManager
         return $this->em;
     }
 
+    /**
+     * Сохраняем команду
+     *
+     * @param Team $team
+     * @return bool
+     */
     public function saveTeam(Team $team): bool
     {
         $isSave = true;
@@ -71,6 +82,7 @@ class TeamManager
 
     /**
      * Можно делить команды только при определенном количестве команд
+     * Проверяем достигло количество команд максимального количества
      *
      * @return bool
      */
@@ -368,7 +380,7 @@ class TeamManager
         $matches = $this->getTeamMatchRep()->findAllByType($typeId);
 
         // Если нету записей значит команды не распределяли
-        if(count($matches) === 0){
+        if (count($matches) === 0) {
             // Распределяем
             $this->splitByMatchPlayoff();
             $matches = $this->getTeamMatchRep()->findAllByType($typeId);
@@ -429,6 +441,12 @@ class TeamManager
         return $this->em->getRepository(TeamMatch::class);
     }
 
+    /**
+     * Возращает следующий тип по переданному. Если последний тип возвращаем null
+     *
+     * @param int $typeId
+     * @return null
+     */
     public function getNextMatchTypeId(int $typeId)
     {
         $nextTypeId = null;

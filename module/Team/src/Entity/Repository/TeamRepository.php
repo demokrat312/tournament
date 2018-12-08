@@ -16,6 +16,12 @@ use Team\Entity\TeamMatch;
 
 class TeamRepository extends EntityRepository
 {
+    /**
+     * Находим команды из определенной группы A или B
+     *
+     * @param string $groupName
+     * @return mixed
+     */
     public function findByGroup(string $groupName)
     {
         $qb = $this->createQueryBuilder('t');
@@ -28,6 +34,12 @@ class TeamRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * Сколько созданно команд
+     *
+     * @return mixed
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     public function getCount()
     {
         $qb = $this->createQueryBuilder('t');
@@ -37,6 +49,8 @@ class TeamRepository extends EntityRepository
     }
 
     /**
+     * Находим команды которые победили на определенном этапе
+     *
      * @param int $typeId
      * @return Team[]
      */
